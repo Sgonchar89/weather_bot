@@ -1,40 +1,39 @@
+import datetime as dt
 import logging
 import os
-import datetime as dt
 
 import requests
-from dotenv import load_dotenv
-from json import JSONDecodeError
-#from config import openweather_token, TELEGRAM_TOKEN
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
+from dotenv import load_dotenv
 
 load_dotenv()
 
 OPENWEATHER_TOKEN = os.environ.get('OPENWEATHER_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-#CHAT_ID = os.getenv('CHAT_ID')
 file_log = logging.FileHandler('program.log')
 console_out = logging.StreamHandler()
 
 logging.basicConfig(handlers=(file_log, console_out),
-                    format='%(asctime)s, %(levelname)s, %(message)s, %(name)s',
-                    level=logging.DEBUG)
+                    format='%(asctime)s, %(levelname)s,'
+                           ' %(message)s, %(name)s', level=logging.DEBUG)
 
 
 bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot)
+
 
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
     await message.reply("Hi! Text me the name of your town and I'll show you "
                         "the weather!")
 
+
 @dp.message_handler()
 async def get_weather(message: types.Message):
 
-    Emoji_code = {
+    emoji_code = {
         "Clear": "Clear \U00002600",
         "Clouds": "Clouds \U00002601",
         "Rain": "Rain \U00002614",
@@ -52,25 +51,28 @@ async def get_weather(message: types.Message):
         city = data['name']
         cur_weather = data['main']['temp']
         weather_icon = data['weather'][0]['main']
-        if weather_icon in Emoji_code:
-            icon = Emoji_code[weather_icon]
+        if weather_icon in emoji_code:
+            icon = emoji_code[weather_icon]
         else:
             icon = "Look out the window"
         humidity = data['main']['humidity']
         pressure = data['main']['pressure']
-        wind = data['wind']['speed'] #!!
+        wind = data['wind']['speed']  # !!
         sunrise_timestamp = (dt.datetime.fromtimestamp(
             data['sys']['sunrise']).strftime('%H:%M:%S'))
         sunset_timestamp = (dt.datetime.fromtimestamp(
             data['sys']['sunset']).strftime('%H:%M:%S'))
-        daylength = (dt.datetime.fromtimestamp(data['sys']['sunset']) -
-                     dt.datetime.fromtimestamp(data['sys']['sunrise']))
+        daylength = (dt.datetime.fromtimestamp(data['sys']['sunset'])
+                     - dt.datetime.fromtimestamp(data['sys']['sunrise']))
 
-        await message.reply(f"***{dt.datetime.now().strftime('%Y-%m-%d %H:%M')}***\n"
-                            f"Weather in {city}: {icon}\nTemperature: {cur_weather}C°\n"
+        await message.reply(f"*{dt.datetime.now().strftime('%Y-%m-%d %H:%M')}"
+                            f"*\nWeather in {city}: {icon}\n"
+                            f"Temperature: {cur_weather}C°\n"
                             f"Wind: {wind} km/h\n"
-                            f"Humidity: {humidity} %\nPressure: {pressure} mm Hg\n"
-                            f"Sunrise: {sunrise_timestamp}\nSunset: {sunset_timestamp}\n"
+                            f"Humidity: {humidity} %\n"
+                            f"Pressure: {pressure} mm Hg\n"
+                            f"Sunrise: {sunrise_timestamp}\n"
+                            f"Sunset: {sunset_timestamp}\n"
                             f"Day length: {daylength}\n")
     except:
         await message.reply('\U00002620 Check City name \U00002620')

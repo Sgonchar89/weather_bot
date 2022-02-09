@@ -1,0 +1,40 @@
+name: weather_bot workflow
+
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: | 
+        # pip upgrade
+        python -m pip install --upgrade pip 
+        # install flake8 and its plugins
+        pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
+        pip install flake8 pytest
+        # requirements installation
+        pip install -r requirements.txt
+
+    - name: Test with flake8 and django tests
+      run: |
+        # running project checks with flake8
+        python -m flake8
+
+  send_message:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: send message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: ${{ github.workflow }} successfully completed!
