@@ -11,6 +11,7 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 # from aiogram.utils import executor
 from dotenv import load_dotenv
+
 # from requests.exceptions import RequestException
 
 load_dotenv()
