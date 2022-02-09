@@ -1,4 +1,4 @@
-![weather_bot workflow](https://github.com/Sgonchar89/weather_bot/actions/workflows/weather_bot workflow.yml/badge.svg)
+![Weather_bot workflow](https://github.com/Sgonchar89/weather_bot/actions/workflows/weather_bot_workflow.yml/badge.svg)
 
 # Weather_outside_bot
 
